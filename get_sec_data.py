@@ -63,10 +63,18 @@ def get_data_from_edgar(ticker, form_type, desired_data_points) :
         
         tag = soup.find(lambda tag: tag.name == "td" and tag.text == data_point)
 
-        parent_tr = tag.find_parent("tr")
+        try :
+
+            parent_tr = tag.find_parent("tr")
+
+        except :
+            
+            collected_data_points[data_point] = None
+            
+            continue
         
-        collected_data_points[data_point] = convert_to_millions([td.text for td in parent_tr.find_all("td") if not td.text in ["", "$"]][1:][0])
+        collected_data_points[data_point] = convert_to_millions([td.text for td in parent_tr.find_all("td") if not td.text in ["", "$", " ", "\xa0"]][1:][0])
         
     return collected_data_points
 
-print(get_data_from_edgar("AAPL", "10-K", ["Net income", "Marketable securities"]))
+#print(get_data_from_edgar("GOOGL", "10-K", ["Net income", "Marketable securities"]))
